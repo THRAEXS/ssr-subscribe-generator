@@ -35,6 +35,7 @@ class Start(object):
 	def UP(self):
 		ip = self.ip()
 		port = 9001
+		
 		server = HTTPServer((ip, port), Server)
 		# print('Starting server, use <Ctrl-C> to stop')
 		print('Server is running at http://%s:%d/. Press Ctrl+C to stop.' % (ip, port))

@@ -11,7 +11,6 @@ class Processer(object):
 		self.link = '%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s&group=%s'
 
 	def run(self):
-		configs = None
 		with open('configs/config.json') as f:
 			configs = json.load(f)
 
