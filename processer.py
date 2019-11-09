@@ -43,10 +43,10 @@ class Processer(object):
 			with open('configs/ssr-dist', 'w') as fo:
 				fo.write(final)
 
+		Start().UP()
+
 	def b64encode(self, s):
 		return base64.urlsafe_b64encode(s.encode(CODING)).decode(CODING).rstrip('=')
 
 if __name__ == '__main__':
-	# Processer().run()
-	# run()
-	Start().UP()
+	Processer().run()

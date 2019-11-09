@@ -1,6 +1,6 @@
 [
     {
-        "server":"EXTERNAL_IP",
+        "server":"EXTERNAL_IP_0",
         "server_ipv6":"[::]",
         "server_port":45970,
         "local_address":"127.0.0.1",
@@ -18,7 +18,7 @@
         "workers":1
     },
     {
-        "server":"EXTERNAL_IP",
+        "server":"EXTERNAL_IP_1",
         "server_ipv6":"::",
         "server_port":45970,
         "local_address":"127.0.0.1",
