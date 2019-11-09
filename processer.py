@@ -8,8 +8,28 @@ CODING = 'UTF-8'
 class Processer(object):
 	def __init__(self):
 		super(Processer, self).__init__()
-		# Please refer to: https://github.com/shadowsocksrr/shadowsocks-rss/wiki/SSR-QRcode-scheme
-		self.link = '%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s&group=%s'
+		'''
+		Please refer to: https://github.com/shadowsocksrr/shadowsocks-rss/wiki/SSR-QRcode-scheme
+		ssr://base64(host:port:protocol:method:obfs:base64pass/?
+			obfsparam=base64param&protoparam=base64param&remarks=base64remarks
+			&group=base64group&udpport=0&uot=0)
+		'''
+		# self.link = '%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s&group=%s'
+		self.link = '{server}:{server_port}:{protocol}:{method}:{obfs}:{password}:/?\
+			obfsparam={obfs_param}&protoparam={protocol_param}&remarks={remarks}&group={group}'
+
+		self.params = [
+			{ 'key': 'server' },
+			{ 'key': 'server_port' },
+			{ 'key': 'protocol' },
+			{ 'key': 'method' },
+			{ 'key': 'obfs' },
+			{ 'key': 'password', 'b64': True },
+			{ 'key': 'obfs_param', 'b64': True },
+			{ 'key': 'protocol_param', 'b64': True },
+			{ 'key': 'remarks', 'b64': True, 'default': 'THRAEX-NODE' },
+			{ 'key': 'group', 'b64': True, 'default': 'THRAEX' }
+		]
 
 	def run_old(self):
 		with open('configs/config.json') as f:
@@ -54,7 +74,8 @@ class Processer(object):
 		printc.infoln('---------------------------[ %s ]---------------------------' %
 			printc.cyan('Base64'))
 
-		self.configs()
+		cfgs = self.configs()
+		self.links(cfgs)
 
 	def configs(self):
 		cfg_path = 'configs/config.json'
@@ -69,17 +90,40 @@ class Processer(object):
 			total = len(configs)
 
 			if total > 0:
-				printc.infoln('Total: %s.' % total)
+				printc.infoln('Total: %s. The original information is:' % total)
 
 				for i in range(total):
 					printc.info('Server %d:' % (i + 1))
 					printc.info(printc.green((configs[i])))
+
+				printc.info()
 			else:
 				printc.warning('No server node information.')
 		except Exception as e:
 			printc.error(e)
 
 		return configs
+
+	def links(self, cfgs):
+		if not cfgs: return
+
+		printc.info('---------------------< %s >--------------------' % 
+			printc.cyan('Generate SSR links'))
+
+		for i in range(len(cfgs)):
+			ind = i + 1
+			printc.info('Server %d:' % ind)
+			for p in self.params:
+				def_val = ''
+				if 'default' in p: def_val = '%s-%d' % (p.get('default'), ind)
+
+				bp = None
+				if p.get('b64'): bp = self.b64encode(cfgs[i].get(p['key'], def_val))
+
+				# print(p['key'], ': ', cfgs[i].get(p['key'], def_val), ', ', bp)
+				preview_val = ''
+				printc.info('\t\t%s: %s' % (p['key'], preview_val))
+			printc.info()
 
 	def b64encode(self, s):
 		return base64.urlsafe_b64encode(s.encode(CODING)).decode(CODING).rstrip('=')
