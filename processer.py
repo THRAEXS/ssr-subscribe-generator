@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json, base64, time
+from server import Start
 
 CODING = 'UTF-8'
 
@@ -45,8 +46,7 @@ class Processer(object):
 	def b64encode(self, s):
 		return base64.urlsafe_b64encode(s.encode(CODING)).decode(CODING).rstrip('=')
 
-import server
-
 if __name__ == '__main__':
 	# Processer().run()
-	server.run()
+	# run()
+	Start().UP()

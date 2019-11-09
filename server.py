@@ -1,18 +1,42 @@
 # -*- coding: utf-8 -*-
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
+import socket
+
+CODING = 'UTF-8'
 
 class Server(BaseHTTPRequestHandler):
-	# def __init__(self):
-	# 	super(Server, self).__init__()
 
 	def do_GET(self):
 		self.send_response(200)
 		self.send_header('Content-type', 'text/plain;charset=utf-8')
 		self.end_headers()
-		self.wfile.write('鬼王'.encode('utf-8'))
 
-def run():
-	a = ('localhost', 8080)
-	s = HTTPServer(a, Server)
-	s.serve_forever()
+		with open('configs/ssr-dist', encoding = CODING) as f:
+			self.wfile.write(f.read().encode(CODING))
+
+class Start(object):
+	def __init__(self):
+		super(Start, self).__init__()
+
+	def ip(self):
+		try:
+			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			s.connect(('8.8.8.8', 80))
+			ip = s.getsockname()[0]
+		except Exception as e:
+			ip = 'localhost'
+			print('Failed to get IP:', e)
+		finally:
+			s.close()
+
+		return ip
+
+	def UP(self):
+		ip = self.ip()
+		port = 9001
+		server = HTTPServer((ip, port), Server)
+		# print('Starting server, use <Ctrl-C> to stop')
+		print('Server is running at http://%s:%d/. Press Ctrl+C to stop.' % (ip, port))
+		server.serve_forever()
+		
