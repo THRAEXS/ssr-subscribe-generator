@@ -71,8 +71,9 @@ class Processer(object):
 			if total > 0:
 				printc.infoln('Total: %s.' % total)
 
-				for cfg in configs:
-					printc.infoln(cfg)
+				for i in range(total):
+					printc.info('Server %d:' % (i + 1))
+					printc.info(printc.green((configs[i])))
 			else:
 				printc.warning('No server node information.')
 		except Exception as e:
