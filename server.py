@@ -40,5 +40,5 @@ class Start(object):
 		# print('Starting server, use <Ctrl-C> to stop')
 		printc.info('Server is running at %s.' % 
 			printc.underline('http://%s:%d/' % (ip, port)))
+		printc.info('Press Ctrl+C to stop.')
 		server.serve_forever()
-		
