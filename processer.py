@@ -109,6 +109,7 @@ class Processer(object):
 		printc.info('---------------------< %s >--------------------' % 
 			printc.cyan('Generate SSR links'))
 
+		ssr_links = []
 		for i in range(len(cfgs)):
 			ind, item, b64_item = i + 1, {}, {}
 			for p in self.params:
@@ -123,12 +124,23 @@ class Processer(object):
 				b64_item[key] = bval
 
 			printc.info('Server %d:' % ind)
-			printc.info('%s' % printc.green(self.link.format(**item)))
-			# printc.info('==>')
+			print(' ==> %s' % printc.green(self.link.format(**item)))
 			b64_link = self.link.format(**b64_item)
-			printc.info('%s' % printc.green(b64_link))
-			# printc.info('==>')
-			printc.infoln('%s' % printc.green('ssr://%s' % self.b64encode(b64_link)))
+			print(' ==> %s' % printc.green(b64_link))
+			ssr_link = 'ssr://%s' % self.b64encode(b64_link)
+			print(' ==> %s' % printc.green(ssr_link))
+			ssr_links.append(ssr_link)
+
+		printc.info()
+		# printc.info('---------------------< %s >--------------------' % 
+		# 	printc.cyan('Output SSR links'))
+		# printc.info(printc.green('Output SSR links'))
+		ssr_links = '\n'.join(ssr_links)
+		printc.info('------------------------------------------------------------------------')
+		print(printc.green(ssr_links))
+		printc.infoln('------------------------------------------------------------------------')
+
+		return ssr_links
 
 	def b64encode(self, s):
 		return base64.urlsafe_b64encode(s.encode(CODING)).decode(CODING).rstrip('=')
