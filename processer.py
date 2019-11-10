@@ -147,20 +147,38 @@ class Processer(object):
 		return ssr_links
 
 	def coding(sefl, links):
+		# links = links + '\n'
+		print("----------d----------")
 		print((links))
 		data = links.encode(CODING)
+		print("----------e----------")
 		print(data)
+
+		print()
 		with open('configs/ssr-links') as f:
 			fd = f.read()
+			print("----------d----------")
 			print(fd)
 			ffd = fd.encode(CODING)
+			print("----------e----------")
 			print(ffd)
-			print('***')
-			print(base64.b64encode(ffd).decode(CODING))
-			print('***')
+			# print('***')
+			# print(base64.b64encode(ffd).decode(CODING))
+			# print('***')
+
+		print('-----------')
+		print(type(data))
+		print(type(ffd))
+		print(data == ffd)
+
+		print('----output base64----')
+		print('first:')
+		print(base64.b64encode(data).decode(CODING))
+		print('second:')
+		print(base64.b64encode(ffd).decode(CODING))
 
 		final = base64.b64encode(data).decode(CODING)
-		print(final)
+		# print(final)
 		with open('configs/ssr-dist', 'w') as fo:
 			fo.write(final)
 
