@@ -15,8 +15,7 @@ class Processer(object):
 			&group=base64group&udpport=0&uot=0)
 		'''
 		# self.link = '%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s&group=%s'
-		self.link = '{server}:{server_port}:{protocol}:{method}:{obfs}:{password}:/?\
-			obfsparam={obfs_param}&protoparam={protocol_param}&remarks={remarks}&group={group}'
+		self.link = '{server}:{server_port}:{protocol}:{method}:{obfs}:{password}:/?obfsparam={obfs_param}&protoparam={protocol_param}&remarks={remarks}&group={group}'
 
 		self.params = [
 			{ 'key': 'server' },
@@ -111,19 +110,25 @@ class Processer(object):
 			printc.cyan('Generate SSR links'))
 
 		for i in range(len(cfgs)):
-			ind = i + 1
-			printc.info('Server %d:' % ind)
+			ind, item, b64_item = i + 1, {}, {}
 			for p in self.params:
-				def_val = ''
+				key, def_val = p['key'], ''
+
 				if 'default' in p: def_val = '%s-%d' % (p.get('default'), ind)
 
-				bp = None
-				if p.get('b64'): bp = self.b64encode(cfgs[i].get(p['key'], def_val))
+				item[key] = cfgs[i].get(key, def_val)
 
-				# print(p['key'], ': ', cfgs[i].get(p['key'], def_val), ', ', bp)
-				preview_val = ''
-				printc.info('\t\t%s: %s' % (p['key'], preview_val))
-			printc.info()
+				bval = cfgs[i].get(key, def_val)
+				if p.get('b64'): bval = self.b64encode(bval)
+				b64_item[key] = bval
+
+			printc.info('Server %d:' % ind)
+			printc.info('%s' % printc.green(self.link.format(**item)))
+			# printc.info('==>')
+			b64_link = self.link.format(**b64_item)
+			printc.info('%s' % printc.green(b64_link))
+			# printc.info('==>')
+			printc.infoln('%s' % printc.green('ssr://%s' % self.b64encode(b64_link)))
 
 	def b64encode(self, s):
 		return base64.urlsafe_b64encode(s.encode(CODING)).decode(CODING).rstrip('=')
