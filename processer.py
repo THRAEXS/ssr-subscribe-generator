@@ -25,7 +25,7 @@ class Processer(object):
 			{ 'key': 'password', 'b64': True },
 			{ 'key': 'obfs_param', 'b64': True },
 			{ 'key': 'protocol_param', 'b64': True },
-			{ 'key': 'remarks', 'b64': True, 'default': 'THRAEX-NODE' },
+			{ 'key': 'remarks', 'b64': True, 'default': 'THRAEX-NODE',  },
 			{ 'key': 'group', 'b64': True, 'default': 'THRAEX' }
 		]
 
@@ -110,34 +110,30 @@ class Processer(object):
 			printc.cyan('Generate SSR links'))
 
 		ssr_links = []
-		with open('configs/ssr-links', 'w') as f:
-			for i in range(len(cfgs)):
-				ind, item, b64_item = i + 1, {}, {}
-				for p in self.params:
-					key, def_val = p['key'], ''
+		for i in range(len(cfgs)):
+			ind, item, b64_item = i + 1, {}, {}
+			for p in self.params:
+				key, def_val = p['key'], ''
 
-					if 'default' in p:
-						if key == 'remarks':
-							def_val = '%s-%d' % (p.get('default'), ind)
-						else:
-							def_val = p.get('default')
+				if 'default' in p:
+					if key == 'remarks':
+						def_val = '%s-%d' % (p.get('default'), ind)
+					else:
+						def_val = p.get('default')
 
-					item[key] = cfgs[i].get(key, def_val)
+				item[key] = cfgs[i].get(key, def_val)
 
-					bval = cfgs[i].get(key, def_val)
-					if p.get('b64'): bval = self.b64encode(bval)
-					b64_item[key] = bval
+				bval = cfgs[i].get(key, def_val)
+				if p.get('b64'): bval = self.b64encode(bval)
+				b64_item[key] = bval
 
-				printc.info('Server %d:' % ind)
-				print(' ==> %s' % printc.green(self.link.format(**item)))
-				b64_link = self.link.format(**b64_item)
-				print(' ==> %s' % printc.green(b64_link))
-				ssr_link = 'ssr://%s' % self.b64encode(b64_link)
-				print(' ==> %s' % printc.green(ssr_link))
-				ssr_links.append(ssr_link)
-
-				f.write(ssr_link)
-				f.write('\n')
+			printc.info('Server %d:' % ind)
+			print(' ==> %s' % printc.green(self.link.format(**item)))
+			b64_link = self.link.format(**b64_item)
+			print(' ==> %s' % printc.green(b64_link))
+			ssr_link = 'ssr://%s' % self.b64encode(b64_link)
+			print(' ==> %s' % printc.green(ssr_link))
+			ssr_links.append(ssr_link)
 
 		printc.info()
 		# printc.info('---------------------< %s >--------------------' % 
@@ -151,40 +147,25 @@ class Processer(object):
 		return ssr_links
 
 	def coding(sefl, links):
-		# links = links + '\n'
-		print("----------d----------")
-		print((links))
+		if not links: return
+
+		printc.infoln('---------------------< %s >---------------------' % 
+			printc.cyan('Encoding SSR link'))
+
+		target = 'configs/ssr-dist'
+		printc.info('Contents are written to %s:' % printc.green(target))
+
 		data = links.encode(CODING)
-		print("----------e----------")
-		print(data)
-
-		print()
-		with open('configs/ssr-links') as f:
-			fd = f.read()
-			print("----------d----------")
-			print(fd)
-			ffd = fd.encode(CODING)
-			print("----------e----------")
-			print(ffd)
-			# print('***')
-			# print(base64.b64encode(ffd).decode(CODING))
-			# print('***')
-
-		print('-----------')
-		print(type(data))
-		print(type(ffd))
-		print(data == ffd)
-
-		print('----output base64----')
-		print('first:')
-		print(base64.b64encode(data).decode(CODING))
-		print('second:')
-		print(base64.b64encode(ffd).decode(CODING))
-
 		final = base64.b64encode(data).decode(CODING)
-		# print(final)
-		with open('configs/ssr-dist', 'w') as fo:
-			fo.write(final)
+
+		printc.info('---------------------------------------------------------------')
+		print(printc.green(final))
+		printc.infoln('---------------------------------------------------------------')
+
+		with open(target, 'w') as fo: fo.write(final)
+
+		printc.info('Execute %s to access %s.' % 
+			(printc.green('server.py'), printc.green('ssr-dist')))
 
 	def b64encode(self, s):
 		return base64.urlsafe_b64encode(s.encode(CODING)).decode(CODING).rstrip('=')
