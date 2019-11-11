@@ -116,7 +116,11 @@ class Processer(object):
 				for p in self.params:
 					key, def_val = p['key'], ''
 
-					if 'default' in p: def_val = '%s-%d' % (p.get('default'), ind)
+					if 'default' in p:
+						if key == 'remarks':
+							def_val = '%s-%d' % (p.get('default'), ind)
+						else:
+							def_val = p.get('default')
 
 					item[key] = cfgs[i].get(key, def_val)
 

@@ -42,3 +42,6 @@ class Start(object):
 			printc.underline('http://%s:%d/' % (ip, port)))
 		printc.info('Press Ctrl+C to stop.')
 		server.serve_forever()
+
+if __name__ == '__main__':
+	Start().UP()
