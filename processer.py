@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import json, base64, printc
+import json, base64, argparse, printc
 from server import Start
 
-CODING = 'UTF-8'
+props = {
+	'encoding': 'UTF-8',
+	'version': '2.0.0'
+}
 
 class Processer(object):
 	def __init__(self):
@@ -53,9 +56,9 @@ class Processer(object):
 
 		print('******************************************')
 		with open(target) as f:
-			data = f.read().encode(CODING)
+			data = f.read().encode(props['encoding'])
 			print('%s\n' % data)
-			final = base64.b64encode(data).decode(CODING) 
+			final = base64.b64encode(data).decode(props['encoding']) 
 			print(final)
 
 			with open('configs/ssr-dist', 'w') as fo:
@@ -155,8 +158,8 @@ class Processer(object):
 		target = 'configs/ssr-dist'
 		printc.info('Contents are written to %s:' % printc.green(target))
 
-		data = links.encode(CODING)
-		final = base64.b64encode(data).decode(CODING)
+		data = links.encode(props['encoding'])
+		final = base64.b64encode(data).decode(props['encoding'])
 
 		printc.info('---------------------------------------------------------------')
 		print(printc.green(final))
@@ -168,7 +171,18 @@ class Processer(object):
 			(printc.green('server.py'), printc.green('ssr-dist')))
 
 	def b64encode(self, s):
-		return base64.urlsafe_b64encode(s.encode(CODING)).decode(CODING).rstrip('=')
+		return base64.urlsafe_b64encode(s.encode(props['encoding'])).decode(props['encoding']).rstrip('=')
 
 if __name__ == '__main__':
-	Processer().run()
+	# Processer().run()
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-v', '--verbose', help = 'Increase output verbosity', action = 'store_true')
+	parser.add_argument('-V', '--version', help = 'Display version information', action = 'store_true')
+	args = parser.parse_args()
+
+	print(args)
+	print(args.verbose)
+
+	# print(argparse.ArgumentParser().add_argument())
+	# print(parser.add_argument.__doc__)
